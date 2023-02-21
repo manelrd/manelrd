@@ -1,0 +1,201 @@
+#include <iostream>
+#include <Windows.h>
+
+using namespace std;
+
+//Variables de uso
+int picas[12];
+int diamantes[12];
+int espadas[12];
+int bastos[12];
+bool gameOver = false;
+
+//Variables Manel
+string player1 = "Manel";
+int pointsPlayer1 = 0;
+bool surrender1 = false;
+bool winnerP1 = false;
+bool loserP1 = false;
+
+//Variables Croupiere
+string player2 = "Croupiere";
+int pointsPlayer2 = 0;
+bool surrender2 = false;
+bool winnerP2 = false;
+bool loserP2 = false;
+
+int respuesta;
+
+
+void empezar() {
+    cout << "\n";
+    cout << "El Blackjack es de los juegos mas miticos de los casinos.Consiste en sumar un valor lo mas proximo a 21 pero sin pasar.\n";
+    //Sleep(4000);
+    cout << "-----------------------------------------------------------------------------------------------------------------------\n";
+    cout << "                        //Empezaremos sacando dos cartas, y el croupier sacara una carta//\n";
+    //Sleep(3000);
+}
+void inicializaArray(int(&pArray)[12]) {
+    for (int i = 0; i < 12; i++) {
+        pArray[i] = 1;
+    }
+}
+void chooseCards(int& totalPoints, string player) {
+    bool choosed = false;
+    int indiceCarta = 0;
+    string tipoPalo;
+    while (!choosed) {
+
+        indiceCarta = rand() % 12;
+
+        if ((rand() % 2) == 0) {
+            if (picas[indiceCarta] == 1) {
+                picas[indiceCarta] = 0;
+                choosed = true;
+                tipoPalo = "picas";
+            }
+
+        }
+        if (diamantes[indiceCarta] == 1) {
+            diamantes[indiceCarta] = 0;
+            choosed = true;
+            tipoPalo = "diamantes";
+        }
+
+        if (espadas[indiceCarta] == 1) {
+            espadas[indiceCarta] = 0;
+            choosed = true;
+            tipoPalo = "espadas";
+        }
+
+        if (bastos[indiceCarta] == 1) {
+            bastos[indiceCarta] = 0;
+            choosed = true;
+            tipoPalo = "bastos";
+
+
+        }
+
+        if (indiceCarta == 1)  {
+            cout << "Te ha tocado un 1, puedes elegir seguir con un 1 o elegir un 11\n";
+            cout << "(1) 1\n";
+            cout << "(2) 11\n";
+            cin >> respuesta;
+
+            if (respuesta == 0) {
+                indiceCarta = 0;
+            }
+            else {
+                indiceCarta = 10;
+            }
+
+        
+
+        }
+    }
+
+    totalPoints += indiceCarta + 1;
+    cout << "\n";
+    cout << "- El jugador " << player << " ha sacado un " << indiceCarta + 1 << " de " << tipoPalo << " y tiene un total de " << totalPoints << endl;
+    //Sleep(3000);
+}
+
+bool checkPoints(int& points, bool& winner, bool& loser) {
+    if (points == 21) {
+        winner = true;
+        return true;
+    }
+    else if (points > 21) {
+        loser = true;
+        return true;
+    }
+    return false;
+}
+
+bool checkWhoWins(int points1, int points2, bool& winner2) {
+    if (points2 > points1) {
+        winner2 = true;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main() {
+
+    empezar();
+
+    inicializaArray(picas);
+    inicializaArray(diamantes);
+    inicializaArray(bastos);
+    inicializaArray(espadas);
+
+
+    srand(time(NULL));
+
+    chooseCards(pointsPlayer1, player1);
+    chooseCards(pointsPlayer1, player1);
+
+    surrender1 = checkPoints(pointsPlayer1, winnerP1, loserP1);
+
+    chooseCards(pointsPlayer2, player2);
+
+    while (!surrender1) {
+        int choice = 0;
+        while (choice != 1 && choice != 2) {
+            cout << "\n";
+            cout << "- Tienes " << pointsPlayer1 << ". Quieres pedir carta?" << endl;
+            Sleep(1500);
+            cout << "(1) Si" << endl;
+            Sleep(1000);
+            cout << "(2) No" << endl;
+            cin >> choice;
+            if (choice != 1 && choice != 2) {
+                cout << "- Por favor, elije una opción válida." << endl;
+            }
+        }
+        if (choice == 1) {
+            chooseCards(pointsPlayer1, player1);
+            surrender1 = checkPoints(pointsPlayer1, winnerP1, loserP1);
+        }
+        else {
+            surrender1 = true;
+        }
+    }
+
+    if (winnerP1) {
+        cout << "-----------------------------------------------------------------------------------------------------------------------\n";
+        cout << "- El jugador " << player1 << " gana y la banca pierde" << endl;
+        cout << "\n";
+    }
+    else if (loserP1) {
+        cout << "-----------------------------------------------------------------------------------------------------------------------\n";
+        cout << "- El jugador " << player1 << " pierde y la banca gana" << endl;
+        cout << "\n";
+    }
+
+    else {
+        while (!surrender2) {
+            chooseCards(pointsPlayer2, player2);
+
+            surrender2 = checkPoints(pointsPlayer2, winnerP2, loserP2);
+            if (!surrender2) {
+                surrender2 = checkWhoWins(pointsPlayer1, pointsPlayer2, winnerP2);
+            }
+        }
+
+        if (winnerP2) {
+            cout << "-----------------------------------------------------------------------------------------------------------------------\n";
+            cout << "- El croupiere gana y el jugador " << player1 << " pierde" << endl;
+            cout << "\n";
+        }
+
+        else if (loserP2) {
+            cout << "-----------------------------------------------------------------------------------------------------------------------\n";
+            cout << "- El croupiere pierde y el jugador " << player1 << " gana" << endl;
+            cout << "\n";
+        }
+    }
+
+}
