@@ -30,17 +30,17 @@ int respuesta;
 void empezar() {
     cout << "\n";
     cout << "El Blackjack es de los juegos mas miticos de los casinos.Consiste en sumar un valor lo mas proximo a 21 pero sin pasar.\n";
-    //Sleep(4000);
+    Sleep(4000);
     cout << "-----------------------------------------------------------------------------------------------------------------------\n";
     cout << "                        //Empezaremos sacando dos cartas, y el croupier sacara una carta//\n";
-    //Sleep(3000);
+    Sleep(3000);
 }
 void inicializaArray(int(&pArray)[12]) {
     for (int i = 0; i < 12; i++) {
         pArray[i] = 1;
     }
 }
-void chooseCards(int& totalPoints, string player) {
+void chooseCards(int& totalPoints, string nombre) {
     bool choosed = false;
     int indiceCarta = 0;
     string tipoPalo;
@@ -76,28 +76,36 @@ void chooseCards(int& totalPoints, string player) {
 
         }
 
-        if (indiceCarta == 1)  {
+
+            if(indiceCarta == 1 && nombre == player1 && !surrender1) {
             cout << "Te ha tocado un 1, puedes elegir seguir con un 1 o elegir un 11\n";
             cout << "(1) 1\n";
             cout << "(2) 11\n";
             cin >> respuesta;
-
-            if (respuesta == 0) {
+       
+            if (respuesta == 1){
                 indiceCarta = 0;
             }
-            else {
+
+            if (respuesta == 2){
                 indiceCarta = 10;
             }
+            
+        }else {
+               if(pointsPlayer2>10) {
+                   indiceCarta = 0;
+               }else {
+                   indiceCarta = 10;
+               }
+            }
 
-        
-
-        }
+       
     }
 
     totalPoints += indiceCarta + 1;
     cout << "\n";
-    cout << "- El jugador " << player << " ha sacado un " << indiceCarta + 1 << " de " << tipoPalo << " y tiene un total de " << totalPoints << endl;
-    //Sleep(3000);
+    cout << "- El jugador " << nombre << " ha sacado un " << indiceCarta + 1 << " de " << tipoPalo << " y tiene un total de " << totalPoints << endl;
+    Sleep(3000);
 }
 
 bool checkPoints(int& points, bool& winner, bool& loser) {
